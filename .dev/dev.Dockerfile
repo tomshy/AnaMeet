@@ -2,7 +2,7 @@
 FROM ruby:2.7.0-slim-buster
 
 ENV PG_MAJOR=12
-ENV NODE_MAJOR=13
+ENV NODE_MAJOR=14
 ENV BUNDLER_VERSION=2.1.4
 ENV YARN_VERSION=1.21.1
 
@@ -36,8 +36,8 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
 RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get -yq dist-upgrade && \
   DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     libpq-dev \
-    postgresql-client-$PG_MAJOR && \
-    # nodejs \
+    postgresql-client-$PG_MAJOR \
+    nodejs \
     yarn=$YARN_VERSION-1 && \
     # $(cat /tmp/Aptfile | xargs) && \
     apt-get clean && \
