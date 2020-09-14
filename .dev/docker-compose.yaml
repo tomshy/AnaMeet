@@ -1,0 +1,129 @@
+version: '3.7'
+
+x-app: &rails
+  build:
+    context: ../
+    dockerfile: ./.dev/dev.Dockerfile
+  image: anameet
+  environment: &env
+    NODE_ENV: development
+    RAILS_ENV: ${RAILS_ENV:-development}
+    RUBYOPT: -W0 # suppress Ruby 2.7 deprecation errors
+  tmpfs:
+    - /tmp
+  networks:
+    - anameet
+
+x-backend: &backend
+  <<: *rails
+  stdin_open: true
+  tty: true
+  volumes:
+    - ../:/home/deploy/app:cached
+    - ./configs/.bash_aliases:/home/deploy/.bash_aliases:ro
+    - ./configs/.psqlrc:/home/deploy/.psqlrc:ro
+    - bundle:/home/deploy/.bundle
+    - node_modules:/home/deploy/app/node_modules
+    - rails_cache:/home/deploy/app/tmp/cache
+    - packs:/home/deploy/app/public/packs
+  environment:
+    <<: *env
+    REDIS_URL: redis://anameet-redis:6379/
+    BOOTSNAP_CACHE_DIR: /home/deploy/.bundle/_bootsnap
+    WEB_CONCURRENCY: 1
+    HISTFILE: /home/deploy/app/log/.bash_history
+    PSQL_HISTFILE: /home/deploy/app/log/.psql_history
+    DATABASE_URL: postgres://postgres:mysecretpassword@anameet-postgres
+    ENABLE_VCR: "true"
+    PARALLEL_WORKERS: 1
+    SIDEKIQ_USERNAME: admin
+    SIDEKIQ_PASSWORD: password
+    # ASSET_HOST: localhost
+    # ASSET_HOST_PORT: 3000
+    # SMTP_SERVER: smtp.sendgrid.net
+    # SMTP_PORT: 587
+    # EMAIL_DOMAIN: staging-api.quikk.dev
+    # EMAIL_USERNAME: apikey
+    # EMAIL_PASSWORD: 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
+    # DEFAULT_FROM: no-reply@quikk.dev
+    # AFRICAS_TALKING_USERNAME: sandbox
+    # AFRICAS_TALKING_KEY: 6ca37e561427ff12b5cf253d67c044b5e1827b9aea360e3851119969c03cf5aa
+    # AFRICAS_TALKING_SENDER:
+
+  depends_on:
+    - anameet-postgres
+    - anameet-redis
+  restart: always #on-failure
+
+services:
+  # test:
+  #   <<: *backend
+  #   command: bundle exec guard
+
+  anameet:
+    <<: *backend
+    container_name: anameet
+    # command: tail -f /dev/null
+    command: bundle exec rails server -b 0.0.0.0
+    ports:
+      - '3000:3000'
+    depends_on:
+      - anameet-sidekiq
+
+  anameet-sidekiq:
+    <<: *backend
+    container_name: anameet-sidekiq
+    command: bundle exec sidekiq # -C config/sidekiq.yml
+
+  webpacker:
+    <<: *rails
+    command: ./bin/webpack-dev-server
+    ports:
+      - '3035:3035'
+    volumes:
+      - ../:/home/deploy/app:cached
+      - bundle:/home/deploy/.bundle
+      - node_modules:/home/deploy/app/node_modules
+      - packs:/home/deploy/app/javascript/packs
+    environment:
+      <<: *env
+      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
+
+  anameet-redis:
+    image: redis:5.0.7-alpine
+    container_name: anameet-redis
+    volumes:
+      - anameet_redis:/data
+    ports:
+      - 6379
+    networks:
+      - anameet
+
+  anameet-postgres:
+    image: postgres:12.1
+    container_name: anameet-postgres
+    volumes:
+      - ./configs/.psqlrc:/root/.psqlrc:ro
+      - anameet_postgres:/var/lib/postgresql/data
+      # - ./volumes/pg_log:/root/log:cached
+    environment:
+      PSQL_HISTFILE: /root/log/.psql_history
+      POSTGRES_PASSWORD: mysecretpassword
+    ports:
+      - 5432
+    healthcheck:
+      test: pg_isready -U postgres -h 127.0.0.1
+      interval: 5s
+    networks:
+      - anameet
+
+volumes:
+  anameet_redis:
+  anameet_postgres:
+  bundle:
+  node_modules:
+  rails_cache:
+  packs:
+
+networks:
+  anameet:
