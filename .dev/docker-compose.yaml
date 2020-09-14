@@ -24,7 +24,7 @@ x-backend: &backend
     - ./configs/.psqlrc:/home/deploy/.psqlrc:ro
     - bundle:/home/deploy/.bundle
     - node_modules:/home/deploy/app/node_modules
-    # - rails_cache:/home/deploy/app/tmp/cache
+    - rails_cache:/home/deploy/app/tmp/cache
     - packs:/home/deploy/app/public/packs
   environment:
     <<: *env
