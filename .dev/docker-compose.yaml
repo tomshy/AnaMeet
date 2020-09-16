@@ -75,19 +75,19 @@ services:
   #   container_name: anameet-sidekiq
   #   command: bundle exec sidekiq # -C config/sidekiq.yml
 
-  webpacker:
-    <<: *rails
-    command: ./bin/webpack-dev-server
-    ports:
-      - '3035:3035'
-    volumes:
-      - ../:/home/deploy/app:cached
-      - bundle:/home/deploy/.bundle
-      - node_modules:/home/deploy/app/node_modules
-      - packs:/home/deploy/app/javascript/packs
-    environment:
-      <<: *env
-      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
+  # webpacker:
+  #   <<: *rails
+  #   command: ./bin/webpack-dev-server
+  #   ports:
+  #     - '3035:3035'
+  #   volumes:
+  #     - ../:/home/deploy/app:cached
+  #     - bundle:/home/deploy/.bundle
+  #     - node_modules:/home/deploy/app/node_modules
+  #     - packs:/home/deploy/app/javascript/packs
+  #   environment:
+  #     <<: *env
+  #     WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
 
   anameet-redis:
     image: redis:5.0.7-alpine

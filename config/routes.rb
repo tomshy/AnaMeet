@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users
-  resources :users do
+  resources :users, only: %w[show edit update]do
     resources :notes
     resources :meetings
   end
