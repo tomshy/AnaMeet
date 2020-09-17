@@ -1,4 +1,5 @@
 class MeetingsController < ApplicationController
+  before_action :authenticate_user!, only: [:create, :update, :destroy]
   before_action :set_meeting, only: [:show, :edit, :update, :destroy]
 
   # GET /meetings
@@ -25,7 +26,7 @@ class MeetingsController < ApplicationController
   # POST /meetings.json
   def create
     @meeting = Meeting.new(meeting_params)
-
+    @meeting.user_id = current_user.id
     respond_to do |format|
       if @meeting.save
         format.html { redirect_to @meeting, notice: 'Meeting was successfully created.' }
@@ -37,6 +38,13 @@ class MeetingsController < ApplicationController
     end
   end
 
+  def join
+    format.html { redirect_to @meeting, notice: 'Left Meeting successfully' } if current_user.join_meeting(meeting_id: @meeting.id)
+  end
+
+  def leave
+    format.html { redirect_to @meetings, notice: 'Left Meeting successfully' } if current_user.leave_meeting(meeting_id: @meeting.id)
+  end
   # PATCH/PUT /meetings/1
   # PATCH/PUT /meetings/1.json
   def update

@@ -31,15 +31,12 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
   && echo 'deb http://dl.yarnpkg.com/debian/ stable main' > /etc/apt/sources.list.d/yarn.list
 
 # Application dependencies
-# We use an external Aptfile for that
-# COPY .dev/configs/Aptfile /tmp/Aptfile
 RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get -yq dist-upgrade && \
   DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     libpq-dev \
     postgresql-client-$PG_MAJOR \
     nodejs \
     yarn=$YARN_VERSION-1 && \
-    # $(cat /tmp/Aptfile | xargs) && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     truncate -s 0 /var/log/*log
@@ -62,9 +59,6 @@ ENV LANG=C.UTF-8 \
 COPY --chown=deploy:admin .gemrc ~/.gemrc
 RUN gem update --system && \
     gem install bundler:$BUNDLER_VERSION
-
-# Add aliases
-# COPY --chown=deploy:admin .dev/.bash_aliases /home/deploy/.bash_aliases
 
 # Uncomment this line if you want to run binstubs without prefixing with `bin/` or `bundle exec`
 ENV PATH ${RAILS_ROOT}/bin:$PATH

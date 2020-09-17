@@ -1,7 +1,12 @@
 <h2>Welcome to Anameet</h2>
 <p>A better way to manage meetings</p>
 <p>
+  <%= link_to "Join Meeting", "/meetings" %>
+  <br><br>
   <%= link_to "Sign Up", "/users/sign_up" %>
-  <br>
+  <br><br>
   <%= link_to "Sign In", "/users/sign_in" %>
+  <br><br>
+  <%= link_to "Sign Out", "/users/sign_out",
+      :method => :delete, :confirm => "Really?" %>
 </p>

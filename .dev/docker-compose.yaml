@@ -20,7 +20,6 @@ x-backend: &backend
   tty: true
   volumes:
     - ../:/home/deploy/app:cached
-    - ./configs/.bash_aliases:/home/deploy/.bash_aliases:ro
     - ./configs/.psqlrc:/home/deploy/.psqlrc:ro
     - bundle:/home/deploy/.bundle
     - node_modules:/home/deploy/app/node_modules
@@ -36,19 +35,6 @@ x-backend: &backend
     DATABASE_URL: postgresql://postgres:mysecretpassword@anameet-postgres:5432
     ENABLE_VCR: "true"
     PARALLEL_WORKERS: 1
-    SIDEKIQ_USERNAME: admin
-    SIDEKIQ_PASSWORD: password
-    # ASSET_HOST: localhost
-    # ASSET_HOST_PORT: 3000
-    # SMTP_SERVER: smtp.sendgrid.net
-    # SMTP_PORT: 587
-    # EMAIL_DOMAIN: staging-api.quikk.dev
-    # EMAIL_USERNAME: apikey
-    # EMAIL_PASSWORD: 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
-    # DEFAULT_FROM: no-reply@quikk.dev
-    # AFRICAS_TALKING_USERNAME: sandbox
-    # AFRICAS_TALKING_KEY: 6ca37e561427ff12b5cf253d67c044b5e1827b9aea360e3851119969c03cf5aa
-    # AFRICAS_TALKING_SENDER:
 
   depends_on:
     - anameet-postgres
@@ -74,20 +60,6 @@ services:
   #   <<: *backend
   #   container_name: anameet-sidekiq
   #   command: bundle exec sidekiq # -C config/sidekiq.yml
-
-  # webpacker:
-  #   <<: *rails
-  #   command: ./bin/webpack-dev-server
-  #   ports:
-  #     - '3035:3035'
-  #   volumes:
-  #     - ../:/home/deploy/app:cached
-  #     - bundle:/home/deploy/.bundle
-  #     - node_modules:/home/deploy/app/node_modules
-  #     - packs:/home/deploy/app/javascript/packs
-  #   environment:
-  #     <<: *env
-  #     WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
 
   anameet-redis:
     image: redis:5.0.7-alpine

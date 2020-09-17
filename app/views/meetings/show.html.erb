@@ -10,5 +10,10 @@
   <%= @meeting.description %>
 </p>
 
-<%= link_to 'Edit', edit_meeting_path(@meeting) %> |
+<p>
+<%= link_to 'Add notes', new_user_note_path %>
+
+</p>
+
+<%= link_to 'Edit', edit_user_meeting_path(current_user, @meeting) %> |
 <%= link_to 'Back', meetings_path %>

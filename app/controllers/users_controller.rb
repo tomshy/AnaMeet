@@ -61,6 +61,14 @@ class UsersController < ApplicationController
     end
   end
 
+  def join_meeting
+    current_user.join_meeting
+  end
+
+  def leave_meeting
+    current_user.leave_meeting
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
