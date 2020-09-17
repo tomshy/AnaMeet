@@ -11,9 +11,9 @@
 </p>
 
 <p>
-<%= link_to 'Add notes', new_user_note_path %>
+<%= link_to 'Add notes', new_user_note_path(current_user, :meeting_id => @meeting.id) %>
 
 </p>
 
-<%= link_to 'Edit', edit_user_meeting_path(current_user, @meeting) %> |
-<%= link_to 'Back', meetings_path %>
+<%= link_to 'Edit', user_meeting_path(current_user, @meeting) %> |
+<%= link_to 'Back', user_meetings_path(current_user) %>

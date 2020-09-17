@@ -16,9 +16,10 @@
       <tr>
         <td><%= meeting.name %></td>
         <td><%= meeting.description %></td>
-        <td><%= link_to 'Show', user_meeting_path(current_user, meeting) %></td>
-        <td><%= link_to 'Edit', edit_user_meeting_path(current_user, meeting) %></td>
-        <td><%= link_to 'Destroy', user_meeting_path(current_user, meeting), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Join', meeting_path(meeting) %></td>
+        <td><%= link_to 'Show', user_meetings_path(current_user, meeting) %></td>
+        <td><%= link_to 'Edit', meetings_path(current_user, meeting) %></td>
+        <td><%= link_to 'Destroy', meetings_path(current_user, meeting), method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
